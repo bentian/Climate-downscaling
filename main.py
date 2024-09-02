@@ -46,7 +46,7 @@ def main():
     topo = GetTopology(y_n = y_n,
                     y_m = y_m,
                     topo_path = config.topo_dir,
-                    use_log1p  = config.topo_use_log1p,
+                    use_log1p = config.topo_use_log1p,
                     use_01    = config.use_01)
 
     ############################################# Model Class ###############################################

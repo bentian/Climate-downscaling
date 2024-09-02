@@ -1,14 +1,14 @@
 # Deep-learning Based Climate Downscaling
 Deep-learning Based Super-resolution Model in Climate Downscaling of Precipitation Data: this is the source code of [Climate Downscaling: A Deep-Learning Based Super-resolution Model of Precipitation Data with Attention Block and Skip Connections](https://arxiv.org/abs/2403.17847).
 
-National Taiwan Normal University 110 sememster
+National Taiwan Normal University 110 semester
 
 Advisor: Ko-Chih Wang
 
 Author: Chia-Hao Chiang
 
 ## Model Architecture
-Composed of CBAMs (channel attetnion, spatial attention block), convlutional layers, and upsampling layer (Subpixel manner).
+Composed of CBAMs (channel attention, spatial attention block), convolutional layers, and upsampling layer (Subpixel manner).
 
 ![image](model_arch.PNG)
 
