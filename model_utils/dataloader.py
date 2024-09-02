@@ -45,7 +45,7 @@ def GetGradCAM(tp_path, auxtrpath, auxtags, xn=14, xm=9):
     # Input
         tp_path: example precipitation data for resulting prediction during model training
         auxtrpath: auxiliary data path lists in the form of [folder1, folder2, ... ]
-        auxtags: auxiliary data type, correseponding to 'auxtrpath' order in the form of [tag1, tag2, ... ]
+        auxtags: auxiliary data type, corresponding to 'auxtrpath' order in the form of [tag1, tag2, ... ]
     # Output
         reshaped (4D) and normalized to [0,1] by their min-max value of total data
         for checking resulting prediction during training.

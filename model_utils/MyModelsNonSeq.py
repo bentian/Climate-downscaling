@@ -1,9 +1,31 @@
 from tensorflow.keras.layers import Conv2D, Conv2DTranspose, Concatenate, UpSampling2D, Activation, BatchNormalization, Input
-from tensorflow.keras.layers import MaxPool2D, Dense, Dropout
+from tensorflow.keras.layers import MaxPool2D, Dense, Dropout, Layer
 from tensorflow.keras.models import Sequential
 import tensorflow as tf
 import math
 from . import MyLayersNonSeq
+
+# Custom Keras layer to perform the multiplication
+class MultiplyLayer(Layer):
+    def call(self, inputs):
+        x1, x2 = inputs
+        return tf.math.multiply(x1, x2)
+
+class SpAttenBlockLayer(Layer):
+    def call(self, input_x):
+        return MyLayersNonSeq.SpAttenBlock(input_x)
+
+# Custom Keras layer for calculating shape
+class ShapeLayer(Layer):
+    def call(self, input_x):
+        return tf.shape(input_x)
+
+# Custom Keras layer for repeating tensors
+class RepeatLayer(Layer):
+    def call(self, inputs):
+        x, repeats = inputs
+        return tf.repeat(x, repeats, axis=0)
+
 
 def MyModelV2(config:object,
               extract_every_n_layer=2,
@@ -32,8 +54,13 @@ def MyModelV2(config:object,
                    padding='SAME', activation='relu')(x)
         if(i % extract_every_n_layer == 0):
             # Attention Block work on main-stream line of x
-            x_attention = tf.math.multiply(x, MyLayersNonSeq.ChAttenBlock(x))
-            x = x + tf.math.multiply(x_attention, MyLayersNonSeq.SpAttenBlock(x_attention))
+            # x_attention = tf.math.multiply(x, MyLayersNonSeq.ChAttenBlock(x))
+            # x = x + tf.math.multiply(x_attention, MyLayersNonSeq.SpAttenBlock(x_attention))
+
+            x_attention = MultiplyLayer()([x, MyLayersNonSeq.ChAttenBlock(x)])
+            sp_atten_output = SpAttenBlockLayer()(x_attention)
+            x = x + MultiplyLayer()([x_attention, sp_atten_output])
+
             x_attention = MyLayersNonSeq.CreateConv(input=x,
                                                     filters = 1,
                                                     size=(3,3),
@@ -79,8 +106,10 @@ def MyModelV2(config:object,
 
     if(use_elevation and (x2 is not None)):
         '''https://stackoverflow.com/questions/68345125/how-to-concatenate-a-tensor-to-a-keras-layer-along-batch-without-specifying-bat'''
-        repeat_shape = tf.shape(x)
-        topo_batch = tf.repeat(x2, repeat_shape[0], axis=0)
+        # repeat_shape = tf.shape(x)
+        # topo_batch = tf.repeat(x2, repeat_shape[0], axis=0)
+        repeat_shape = ShapeLayer()(x)
+        topo_batch = RepeatLayer()([x2, repeat_shape[0]])
         x = Concatenate(axis=-1)([x, topo_batch])
 
     x = MyLayersNonSeq.CreateAuxConcat(input=x,
