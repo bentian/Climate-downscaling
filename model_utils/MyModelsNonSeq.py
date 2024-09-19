@@ -77,7 +77,7 @@ def MyModelV2(config:object,
     if(x3 is not None):
         x = Concatenate(axis=-1)([x, x3])
 
-    if(use_elevation and (x2 is not Nqone)):
+    if(use_elevation and (x2 is not None)):
         '''https://stackoverflow.com/questions/68345125/how-to-concatenate-a-tensor-to-a-keras-layer-along-batch-without-specifying-bat'''
         repeat_shape = tf.shape(x)
         topo_batch = tf.repeat(x2, repeat_shape[0], axis=0)
