@@ -32,13 +32,8 @@ def MyModelV2(config:object,
                    padding='SAME', activation='relu')(x)
         if(i % extract_every_n_layer == 0):
             # Attention Block work on main-stream line of x
-            # x_attention = tf.math.multiply(x, MyLayersNonSeq.ChAttenBlock(x))
-            # x = x + tf.math.multiply(x_attention, MyLayersNonSeq.SpAttenBlock(x_attention))
-
-            x_attention = MultiplyLayer()([x, MyLayersNonSeq.ChAttenBlock(x)])
-            sp_atten_output = SpAttenBlockLayer()(x_attention)
-            x = x + MultiplyLayer()([x_attention, sp_atten_output])
-
+            x_attention = tf.math.multiply(x, MyLayersNonSeq.ChAttenBlock(x))
+            x = x + tf.math.multiply(x_attention, MyLayersNonSeq.SpAttenBlock(x_attention))
             x_attention = MyLayersNonSeq.CreateConv(input=x,
                                                     filters = 1,
                                                     size=(3,3),
@@ -82,12 +77,10 @@ def MyModelV2(config:object,
     if(x3 is not None):
         x = Concatenate(axis=-1)([x, x3])
 
-    if(use_elevation and (x2 is not None)):
+    if(use_elevation and (x2 is not Nqone)):
         '''https://stackoverflow.com/questions/68345125/how-to-concatenate-a-tensor-to-a-keras-layer-along-batch-without-specifying-bat'''
-        # repeat_shape = tf.shape(x)
-        # topo_batch = tf.repeat(x2, repeat_shape[0], axis=0)
-        repeat_shape = ShapeLayer()(x)
-        topo_batch = RepeatLayer()([x2, repeat_shape[0]])
+        repeat_shape = tf.shape(x)
+        topo_batch = tf.repeat(x2, repeat_shape[0], axis=0)
         x = Concatenate(axis=-1)([x, topo_batch])
 
     x = MyLayersNonSeq.CreateAuxConcat(input=x,
