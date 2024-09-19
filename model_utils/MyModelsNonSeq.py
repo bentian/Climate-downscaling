@@ -1,31 +1,9 @@
 from tensorflow.keras.layers import Conv2D, Conv2DTranspose, Concatenate, UpSampling2D, Activation, BatchNormalization, Input
-from tensorflow.keras.layers import MaxPool2D, Dense, Dropout, Layer
+from tensorflow.keras.layers import MaxPool2D, Dense, Dropout
 from tensorflow.keras.models import Sequential
 import tensorflow as tf
 import math
 from . import MyLayersNonSeq
-
-# Custom Keras layer to perform the multiplication
-class MultiplyLayer(Layer):
-    def call(self, inputs):
-        x1, x2 = inputs
-        return tf.math.multiply(x1, x2)
-
-class SpAttenBlockLayer(Layer):
-    def call(self, input_x):
-        return MyLayersNonSeq.SpAttenBlock(input_x)
-
-# Custom Keras layer for calculating shape
-class ShapeLayer(Layer):
-    def call(self, input_x):
-        return tf.shape(input_x)
-
-# Custom Keras layer for repeating tensors
-class RepeatLayer(Layer):
-    def call(self, inputs):
-        x, repeats = inputs
-        return tf.repeat(x, repeats, axis=0)
-
 
 def MyModelV2(config:object,
               extract_every_n_layer=2,
